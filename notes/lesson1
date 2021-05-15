@@ -1,0 +1,10 @@
+- OOP:
+  programming paradigm, where we think about a problem in terms of objects
+  collection of objects that interact with each other
+- Encapsulation:
+  combining data and the operations related to that data into one entity
+  bundling state (data) and behavior (operations) to form a single object
+
+when object properties have functions, we call it a method.
+
+collaborator objects or collaborators is something that helps an object reference another object
