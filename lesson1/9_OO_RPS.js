@@ -1,5 +1,3 @@
-/* eslint-disable max-lines-per-function */
-/* eslint-disable max-statements */
 /* eslint-disable max-len */
 /*
 The classical approach to planning an object-oriented application includes several steps:
@@ -53,7 +51,6 @@ function createComputer() {
   let computerObject = {
     choose(moveChangeVal) {
       if (moveChangeVal) {
-        console.log(`works`);
         const choices = ['paper', 'scissors', 'lizard', 'spock'];
         let randomIndex = Math.floor(Math.random() * choices.length);
         this.move = choices[randomIndex];
@@ -132,9 +129,9 @@ const RPSGame = {
       console.log(`Invalid response`);
     }
     if (ans === 'yes') {
-      for (let i = 0; i < this.human.history.length; i++) {
-        console.log(`Human:    ${this.human.history[i]}`);
-        console.log(`Computer: ${this.computer.history[i]}`);
+      for (let i1 = 0; i1 < this.human.history.length; i1++) {
+        console.log(`Human:    ${this.human.history[i1]}`);
+        console.log(`Computer: ${this.computer.history[i1]}`);
         console.log(`---`);
       }
     }
@@ -206,8 +203,7 @@ const RPSGame = {
     while (true) {
       while (this.human.score < this.winningScore && this.computer.score < this.winningScore) {
         this.human.choose();
-        let moveChange = this.calculateMoveChange();
-        this.computer.choose(moveChange);
+        this.computer.choose(this.calculateMoveChange());
         this.displayRoundWinner();
         this.trackHistory();
       }
