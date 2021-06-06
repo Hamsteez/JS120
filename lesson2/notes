@@ -1,0 +1,115 @@
+property keys are always strings
+bracket notation gets executed on the fly
+
+in operator
+hasOwnProperty
+
+"false" in myObject                    // true
+"true" in myObject                     // false
+
+myObject.hasOwnProperty("7")           // true
+myObject.hasOwnProperty("8")           // false
+
+let b = Object.create(a)
+
+> Object.getPrototypeOf(b)
+{ foo: 1, bar: 2 }
+
+let b = {};
+Object.setPrototypeOf(b, a);
+
+obj.isPrototypeOf(obj1)
+
+first-class functions - values that we can assign to variables and properties, pass them to other functions, 
+                        or return them from another function.
+typeof 'myFunc' is a function
+
+Higher-Order functions has one of the following: 
+  - Takes a function as an argument
+  - Returns a function
+
+two invocations of the same function or method can have very different contexts depending on how you make those calls
+
+2 ways to set the context when calling a function or method:
+  - Explicit: The execution context that you set explicitly (also called binding `this` or setting the binding)
+  - Implicit: The execution context that JS sets implicitly when your code doesnt provide an explicit context
+
+
+call: (basically give access to the object to refer to another object to explicitly state where to get information from)
+
+let obj1 = {
+  logNum() {
+    console.log(this.num);
+  }
+};
+
+let obj2 = {
+  num: 42
+};
+
+obj1.logNum.call(obj2); // logs 42
+-------------------------
+function sumNum(num1) {
+  return this.num + num1;
+}
+
+let obj = {
+  num: 42
+};
+obj.num = sumNum.call(obj, 5);
+console.log(obj.num); // => 47
+
+someObject.someMethod.call(context, arg1, arg2, arg3, ...)
+
+apply: (similar to call)
+someObject.someMethod.apply(context, [arg1, arg2, arg3, ...])
+Not really needed bc you can just use call with an array: 
+  let args = [arg1, arg2, arg3];
+  someObject.someMethod.call(context, ...args);
+
+bind: permanently binds the function to the object passed as an argument
+
+function sumNum(num1) {
+  return this.num + num1;
+}
+
+let obj = {
+  num: 42
+};
+
+let sumNum2 = sumNum.bind(obj);
+sumNum2(5); // => 47
+
+preserve context loss:
+let that = this;
+call, bind
+
+passing a function as an argument to another function strips it of its execution context, which means the function argument gets
+  invoked with the context set to the global object.
+
+function createCar(make, model, year) {
+  return {
+    make, // shorthand for `make: make`
+
+let foo = {
+  Car: function(make, model, year) {
+    this.make = make;
+    this.model = model;
+    this.year = year;
+  }
+};
+
+let car1 = new foo.Car('Toyota', 'Camry', 2019);
+car1.make; //=> 'Toyota'
+
+civic instanceof Car
+
+function Dog(name, breed, weight) {
+  this.name = name;
+  this.breed = breed;
+  this.weight = weight;
+}
+
+Dog.prototype.bark = function() {
+  console.log(this.weight > 20 ? 'Woof!' : 'Yip!');
+};
