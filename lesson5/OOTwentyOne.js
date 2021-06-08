@@ -1,5 +1,4 @@
-/* eslint-disable max-statements */
-/* eslint-disable max-lines-per-function */
+
 let readline = require('readline-sync');
 
 class Card {
@@ -75,6 +74,12 @@ class Dealer extends Participant {
 }
 
 class TwentyOneGame {
+  static START_DOLLAR_AMOUNT = 5;
+  static LOSE_DOLLAR_AMOUNT = 0;
+  static WIN_DOLLAR_AMOUNT = 10;
+  static DEALER_MAX_VAL = 17;
+  static OBJECTIVE_POINT_VAL = 21;
+
   constructor() {
     this.card = new Card();
     this.player = new Player();
@@ -84,45 +89,66 @@ class TwentyOneGame {
   start() {
     console.clear();
     this.displayWelcomeMessage();
-    this.mainGameLoop();
+    while (this.player.dollars > TwentyOneGame.LOSE_DOLLAR_AMOUNT
+      && this.player.dollars < TwentyOneGame.WIN_DOLLAR_AMOUNT) {
+      this.mainGameLoop();
+      if (!this.checkDollars()) break;
+      console.clear();
+    }
     this.displayGoodbyeMessage();
   }
 
   mainGameLoop() {
-    while (this.player.dollars > 0 && this.player.dollars < 11) {
-      this.player.emptyHand();
-      this.dealer.emptyHand();
-      this.card.createDeck();
-      this.dealFirstTwoCards(this.player);
-      this.dealFirstTwoCards(this.dealer);
-      this.showCards(this.player);
-      this.showOneDealerCard();
-      this.displayCurrentHandScore(this.player);
-      this.hitOrStay();
-      this.displayBust(this.player);
-      if (!this.checkIfBusted(this.player)) {
-        this.showCards(this.dealer);
-        this.displayCurrentHandScore(this.dealer);
-        this.dealerPlays();
-        this.displayBust(this.dealer);
-      }
-      if (!this.checkIfBusted(this.dealer) &&
-        !this.checkIfBusted(this.player)) {
-        this.checkWinner();
-      }
-      console.log(this.player.dollars);
+    this.initializeGame();
+    this.showOneDealerCard();
+    this.showingCards(this.player);
+    this.hitOrStay();
+    this.displayBust(this.player);
+    if (!this.checkIfBusted(this.player)) {
+      this.showingCards(this.dealer);
+      this.dealerPlays();
+      this.displayBust(this.dealer);
     }
+    if (!this.checkIfBusted(this.dealer) &&
+      !this.checkIfBusted(this.player)) {
+      this.checkWinner();
+    }
+    this.displayRoundScore();
+    this.displayDollarVal();
+  }
+
+  initializeGame() {
+    this.player.emptyHand();
+    this.dealer.emptyHand();
+    this.card.createDeck();
+    this.dealFirstTwoCards(this.player);
+    this.dealFirstTwoCards(this.dealer);
+  }
+
+  showingCards(user) {
+    this.showCards(user);
+    this.displayCurrentHandScore(user);
   }
 
   displayWelcomeMessage() {
     console.log(`Welcome to the game of 21! Score as close to 21 as possible to win, Good Luck!`);
     console.log('You are starting with $5.00.');
-    console.log('For each round you win, you will gain $1.00, each round loss will be a deduction of $1.00.');
-    console.log('If you reach $0.00 or $10.00 you will lose/win and the game will then quit.');
+    console.log('For each round you win, you will gain $1.00; each round lost will be a deduction of $1.00.');
+    console.log('If you reach $0.00 or $10.00 you will lose/win and the game will then quit. Good Luck!');
+    console.log('');
   }
 
   displayGoodbyeMessage() {
     console.log(`Thank you for playing. Have a good day!`);
+  }
+
+  displayDollarVal() {
+    console.log(`You now have $${this.player.dollars}.`);
+    console.log(`-----`);
+  }
+
+  resetDollars() {
+    this.player.dollars = 5;
   }
 
   checkWinner() {
@@ -136,7 +162,24 @@ class TwentyOneGame {
     } else {
       console.log(`It was a tie!`);
     }
+  }
+
+  checkDollars() {
+    if (this.player.dollars === TwentyOneGame.LOSE_DOLLAR_AMOUNT) {
+      console.log(`Tough luck, you ran out of money!`);
+      this.resetDollars();
+      return this.askNewGame();
+    } else if (this.player.dollars === TwentyOneGame.WIN_DOLLAR_AMOUNT) {
+      console.log(`Nice job, you maxed out on winnings!`);
+      this.resetDollars();
+      return this.askNewGame();
+    }
+    return this.askToContinue();
+  }
+
+  displayRoundScore() {
     console.log(`The final score was: Player - ${this.calculateHand(this.player)}. Dealer - ${this.calculateHand(this.dealer)}`);
+    console.log(`-----`);
   }
 
   dealFirstTwoCards(user) {
@@ -197,7 +240,7 @@ class TwentyOneGame {
     });
 
     values.filter(value => value === "Ace").forEach(_ => {
-      if (sum > 21) sum -= 10;
+      if (sum > TwentyOneGame.OBJECTIVE_POINT_VAL) sum -= 10;
     });
 
     return sum;
@@ -212,16 +255,23 @@ class TwentyOneGame {
         if (['h', 's'].includes(ans)) break;
         console.log(`Please enter a valid response`);
       }
-      if (ans === 's') {
-        console.log(`You chose to stay!`);
-        console.log(``);
-        break;
-      }
-      console.log(`You chose to hit!`);
-      console.log(``);
-      this.dealACard(this.player);
-      if (this.checkIfBusted(this.player)) break;
+      if (!this.playersMove(ans)) break;
     }
+  }
+
+  playersMove(ans) {
+    if (ans === 's') {
+      console.log(`You chose to stay!`);
+      console.log(``);
+      return false;
+    }
+    console.clear();
+    console.log(`You chose to hit!`);
+    console.log(``);
+    this.showOneDealerCard();
+    this.dealACard(this.player);
+    if (this.checkIfBusted(this.player)) return false;
+    return true;
   }
 
   dealACard(user) {
@@ -233,30 +283,55 @@ class TwentyOneGame {
   }
 
   checkIfBusted(user) {
-    return this.calculateHand(user) > 21;
+    return this.calculateHand(user) > TwentyOneGame.OBJECTIVE_POINT_VAL;
   }
 
   displayBust(user) {
-    if (this.calculateHand(user) > 21) {
+    if (this.calculateHand(user) > TwentyOneGame.OBJECTIVE_POINT_VAL) {
       if (user === this.player) {
         console.log(`You busted with a score of ${this.calculateHand(user)}!`);
+        console.log(`-----`);
         this.player.dollars -= 1;
       } else {
         console.log(`Dealer busted with a score of ${this.calculateHand(user)}!`);
+        console.log(`-----`);
         this.player.dollars += 1;
       }
     }
   }
 
   dealerPlays() {
-    while (this.calculateHand(this.dealer) < 17) {
+    while (this.calculateHand(this.dealer) < TwentyOneGame.DEALER_MAX_VAL) {
       console.log(`Dealer chose to hit!`);
       console.log('');
       this.dealACard(this.dealer);
     }
     if (!this.checkIfBusted(this.dealer)) {
       console.log(`Dealer chose to stay with a score of ${this.calculateHand(this.dealer)}!`);
+      console.log('');
     }
+  }
+
+  askToContinue() {
+    let ans;
+    while (true) {
+      console.log(`Would you like to continue? (y or n)`);
+      ans = readline.question().toLowerCase();
+      if (['y', 'n'].includes(ans)) break;
+      console.log(`Please enter a valid response`);
+    }
+    return ans === 'y';
+  }
+
+  askNewGame() {
+    let ans;
+    while (true) {
+      console.log(`Would you like to start a new game? (y or n)`);
+      ans = readline.question().toLowerCase();
+      if (['y', 'n'].includes(ans)) break;
+      console.log(`Please enter a valid response`);
+    }
+    return ans === 'y';
   }
 }
 
