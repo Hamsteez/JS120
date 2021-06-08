@@ -44,10 +44,6 @@ class Card {
         return 'Spades';
     }
   }
-
-  deal() {
-
-  }
 }
 
 class Participant {
