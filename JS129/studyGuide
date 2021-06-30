@@ -1,0 +1,335 @@
+[] Objects, object factories, constructors and prototypes, OLOO, and ES6 classes
+[] Methods and properties; instance and static methods and properties
+[] Prototypal and pseudo-classical inheritance
+[] Encapsulation
+[] Polymorphism
+[] Collaborator objects
+[] Single vs multiple inheritance
+[] Mix-ins; mix-ins vs. inheritance
+[] Methods and functions; method invocation vs. function invocation
+[] Higher-order functions
+[] The global object
+[] Method and property lookup sequence
+[] Function execution context and this
+[] Implicit and explicit execution context
+[] Dealing with context loss
+[] call, apply, and bind
+[] Object.assign and Object.create
+[] Built-in constructors like Array, Object, String and Number
+[] Reading OO code
+
+OOP is a programming paradigm in which we think about a problem in terms of objects.
+Uses those objects to organize your problem.
+OOP: a set of objects with state and behavior.
+  state - properties: color, number of doors etc.
+  behavior: started, driven, parked etc
+
+Advantages
+It lets programmers think about a problem at a higher-level of abstraction, which helps them break down and solve the problem.
+OOP helps programmers write programs that reduce the dependencies in a program, which makes maintenance easier.
+Done right, OOP makes code flexible, easy to understand, and easy to change.
+
+Disadvantages
+OOP programs are often much larger than the equivalent procedural program.
+OOP may lead to less efficient code; OO programs may require more memory, disk space, and computing power.
+
+Encapsulation: describes the idea of bundling or combining the data and operations that work on that data into a single entity (obj)
+Combining data and operations relevant to that data is Encapsulation.
+Encapsulation is about bundling state (data) and behavior (operations) to form an object.
+Grouping of related properties and methods in a single object.
+
+In other languages, encapsulation refers to objects exposing a public interface for interacting with other objects and keep their
+  implementation details hidden.
+Most OOP languages support data restrictions, JS does not.
+
+Objects that help provide state within another object are called collaborator objects (Collaborators).
+Collaboration is all about objects working together in some manner.
+'x' object collaborates with 'y' object to access 'y' objects properties.
+Collaborators represent the connections between the different classes.
+
+Automate object creation using object factories: 
+  functions that create and return objects of a particular type.
+Object factory serves 2 purposes:
+  - returns objects that represent data of a specific type
+  - reuses code
+
+You can merge two objects by using Object.assign(obj1, obj2)
+You can return it from a factory function to combine both functionalities of the objects.
+
+While values can be any of the JavaScript types, property keys are always strings.
+
+Dot notation is also called member access notation, while bracket notation is called computed member access notation.
+
+Object.keys returns an array of enumerable properties while Object.getOwnPropertyNames returns all properties regardless if 
+  they’re enumerable or not.
+
+Prototypal inheritance: the object that you inherit properties and methods from is called the prototype.
+let b = Object.create(a) -> a is the prototype object. This returns a new object that inherits properties from the prototype 
+  object.
+b delegates property and method access to it prototype.
+b.hasOwnProperty('something') - if a has the property and b doesn't, this will return false;
+Object.getPrototypeOf(b) - gets the protype of b which is a.
+Object.setPrototypeOf(b, a) this does the same thing as Object.Create(a) but you need to initialize b beforehand.
+
+for/in and Object.keys deal with enumerable properties which is merely a way of talking about properties you can iterate over.
+for/in iterates over all of the objects enumerable properties - including those inside its prototype chain.
+
+Prototype chain is the objects that are the prototype of an object. Dont forget the default object in the chain.
+
+When 2 objects in the same prototype chain have a property with the same name, the object thats closer to the calling object takes
+  precedence.
+
+3 useful methods:
+Object.prototype.toString() returns a string representation of the object.
+Object.prototype.isPrototypeOf(obj) determines whether the object is part of another object's prototype chain.
+Object.prototype.hasOwnProperty(prop) determines whether the object contains the property.
+
+Anonymous functions is the unnamed function that is assigned to a variable:
+  let prompt = function() { // Assign to a variable
+  };
+
+First class functions - functions in JS are values that we can assign variables and properties, pass them to other functions, or
+  return them from another function.
+
+You should not invoke functions when you want to use them as values. Use invocation only when you need to run the code in the 
+  function.
+
+Higher order function - function that has at least one of the following properties:
+  - takes a function as an argument
+  - returns a function
+
+Global object serves as the implicit execution context for function invocations.
+
+When you dont use let const or var when assiging a value to a variable, the variable gets added to the global object as a property.
+
+Execution context is a concept that refers to the environment in which a function executes. In JS this refers to the current value
+  of the `this` keyword.
+
+2 ways to set the context when calling a function or method:
+  - Explicit: The execution context that you set explicitly
+  - Implicit: The execution context that JS sets implcitly when your code doesnt provide an explicit context.
+
+Setting the execution context is also called binding `this` or setting the binding.
+
+Method execution context - when you call a method that belongs to an object, the execution context inside that method call is the 
+  object used to call the method. - provides an implicit execution context.
+
+Regular function calls use the global object as their execution context while method calls use the calling object as their context.
+
+`call` lets you specify the execution context. - explicit
+someObject.someMethod.call(context, arg1, arg2, arg3, ...)
+
+`bind` returns a new function, the new function is permanently bound to the object passed as the `bind`s first argument.
+
+Context loss:
+  john.greetings();         // context is john
+  let foo = john.greetings; // Strips context
+A way to overcome this is to use `bind` and use that variable from there.
+
+Context loss within a function can be fixed by using `let that = this;` or by using `call` when executing the function call 
+  or by using `bind` on the inner function and set it to a variable then call that variable.
+
+Arrow functions defined inside another function always has the same context as the outer function: `let bar = () => {}`
+Dont use arrow functions as methods on an object.
+
+For forEach map etc, use optional thisArg (`,this` at the end of the function).
+
+Object.getPrototypeOf and obj.isPrototypeOf to check for prototype relationships between objects
+Object.getOwnPropertyNames and obj.hasOwnProperty can be used to test whether an object owns a given property
+
+JavaScript has first-class functions that have the following characteristics:
+  - You can add them to objects and execute them in the respective object's context.
+  - You can remove them from their objects, pass them around, and execute them in entirely different contexts.
+  - They're initially unbound but dynamically bound to a context object at execution time.
+
+Object constructors are little factories that can create an endless number of objects of the same type.
+  - Call it with a `new` keyword.
+  - use `this` to set the objects properties and methods
+  - dont supply explicit return values
+
+When you use the `new` keyword:
+  - It creates an entirely new object.
+  - It sets the prototype of the new object to the object that is referenced by the constructor's prototype property.
+  - It sets the value of this for use inside the function to point to the new object.
+  - It invokes the function. Since this refers to the new object, we use it within the function to set the object's properties and 
+    methods.
+  - Finally, once the function finishes running, new returns the new object even though we don't explicitly return anything.
+
+you can use `new` on methods that you define in objects but calling a method defined with concise syntax wont work:
+let foo = {
+  Car(make, model, year) {}
+}
+new foo.Car() -> TypeError
+
+Can use Object.assign(this, args) to pass in many arguments for the constructor function.
+
+You can find out the constructor of an object by using the `instanceof` operator
+
+The function prototype is a `prototype` property that all function objects in JS have. This distinguishes them from the prototypes
+  used when creating ordinary objects.
+
+To add to the prototype: Dog.prototype.bark = function() {}
+
+var.constructor gives you the constructor of the variable.
+
+An instance is just another term for the objects created using any means of defining multiple objects of the same kind.
+
+Properties of an instance are instance properties.
+Instance properties arent properties of the constructor.
+
+Static properties are defined and accessed directly on the constructor, not on an instance or a prototype.
+
+Built-in constructors:
+  - new Array()
+    - can take in arguments but if only 1 arg is provided, then it creates an empty arr with 3 slots
+    - cannot accept non-integers or negative numbers
+    - > (new Array(3)).fill('*') --> [ '*', '*', '*' ]
+    - `Array` lets you ommit the new keyword but stay consistent and use it
+      - Static Array Methods
+        - Array.isArray([])
+        - Array.from({0: 'a', 1: 'b', 2: 'c', length: 3}) --> ['a', 'b', 'c']
+          - takes an array-like object (object that has a length property and provides indexed access to some of its properties)
+  - new Object()
+    - `Object` lets you ommit the new keyword but stay consistent and use it
+  - new String()
+    - two types of strings in JS: string primitives and string objects.
+    - When using built in methods on strings, JS wraps the string into an object for you. dont need to do anything
+    - Dont use new String()
+  - Number and Boolean
+    - similar to string when using new keyword
+    - without new, it converts the arg to a number or boolean value.
+    - also avoid creating Number and Boolean objects explicitly
+
+Almost all JavaScript objects, whether built-in or custom-created, inherit from Object.prototype, either directly or further down 
+  the prototype chain. 
+
+JS has the class keyword - syntax designed to be easier to read or use.
+regular way is called class declaration
+class expressions: let Rectangle = class {}
+
+first-class citizen is a value that can be passed into a function, returned from a function, and assigned to a variable.
+  also known as first-class objects.
+
+to create static properties or methods, just use `static` inside the class.
+
+The pseudo-classical object creation pattern generates objects using a constructor function that defines state and a prototype 
+  object that defines shared behaviors.
+The pseudo-classical inheritance pattern has types (e.g., classes) inherit from other types. This way, all objects of a given type 
+  can share behaviors from the same source.
+
+OLOO pattern: Objects Linking to Other Objects
+Advantage of OLOO over factory Function - all objects created with the OLOO pattern inherit methods from a single prototype object, 
+  the objects that inherit from that prototype object share the same methods. Factory functions, on the other hand, create copies of 
+  all the methods for each new object.
+
+CP inheritance:
+  Square.prototype = Object.create(Rectangle.prototype);
+  Square.prototype.constructor = Square;
+  Also use Person.call(this) inside to inherit properties.
+
+Prototypal Inheritance vs. Pseudo-Classical Inheritance
+Simpler form of inheritance is prototypal inheritance/delegation/ object inheritance.
+An object's internal [[Prototype]] property points to another object, and the object can delegate method calls to that other object
+
+"pseudo-classical" refers to the fact that the pattern mimics classes from other OO languages but doesn't actually use classes.
+A constructor's prototype object (the object referenced by its prototype property) inherits from another constructor's prototype.
+That is, a sub-type inherits from a super-type.
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------
+//OLOO Prototypal Inheritance
+let humanPrototype = {
+  myName() { return this.name; },
+  myAge() { return this.age; },
+};
+
+let personPrototype = Object.create(humanPrototype);
+personPrototype.toString = function() {
+  return `My name is ${this.myName()} and I'm ${this.myAge()} years old.`;
+};
+
+let will = Object.create(personPrototype);
+will.name = 'William';
+will.age = 28;
+will.toString(); // => My name is William and I'm 28 years old.
+
+//CP Pseudo-Classical inheritance
+function Human() {}
+Human.prototype.myName = function() { return this.name; };
+Human.prototype.myAge = function() { return this.age; };
+
+function Person() {}
+Person.prototype = Object.create(Human.prototype);
+Person.prototype.constructor = Person;
+Person.prototype.toString = function() {
+  return `My name is ${this.myName()} and I'm ${this.myAge()} years old.`;
+};
+
+//can also use Human.call(this) inside of Person if we want to inherit the properties as well.
+
+let will = new Person();
+will.name = 'William';
+will.age = 28;
+will.toString(); // => My name is William and I'm 28 years old.
+
+//class with extends, alternative form of pseudo-classical inheritance
+class Human {
+  myName() { return this.name; }
+  myAge() { return this.age; }
+}
+
+class Person extends Human {
+  toString() {
+    return `My name is ${this.myName()} and I'm ${this.myAge()} years old.`;
+  }
+}
+
+let will = new Person();
+will.name = 'William';
+will.age = 28;
+will.toString(); // => My name is William and I'm 28 years old.
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Single inheritance: an object can have only one prototype object.
+
+Mix-in pattern simply copies the properties of one object to another with object.assign or some similar technique.
+Mix-in is an object that defines one or more methods that can be 'mixed in' to a class.
+--------
+const Swimmable = {
+  swim() {};
+}
+const Flyable = {
+  fly() {}
+}
+class Duck {}
+Object.assign(Duck.prototype, Swimmable, Flyable);
+
+Polymorphism: the ability of objects with different types to respond in different ways to the same method invocation.
+  - data of different types can respond to a common interface
+When we don't care what type of object is calling the method, we're using polymorphism
+Polymorphism thru inheritance and thru method overriding - treated the same so both thru inheritance.
+
+Duck typing occurs when objects of different unrelated types both respond to the same method name.
+Duck typing is a form of polymorphism.
+
+Polymorphism: 
+  - It can be implemented through inheritance by method overriding. It can also be implemented through duck typing; 
+    by ensuring that objects of different types use the same method name to perform different but related functions, 
+    those objects can be interacted with in a uniform way.
+
+
+class Dog {
+  constructor(name) {
+    this.name = name;
+  }
+
+  sayHello() {
+    console.log(`Woof! My name is ${this.name}.`)
+  }
+}
+
+This code defines a Dog class with two methods. The constructor method initializes a new Dog object, which it does by assigning 
+  the instance property this.name to the dog's name specified by the argument. The sayHello instance method logs a message to the 
+  console that includes the dog's name in place of ${this.name}. The instance method sayHello returns undefined.
